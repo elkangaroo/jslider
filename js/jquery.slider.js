@@ -160,7 +160,6 @@
       labels: true,
       round: 0,
       format: { format: "#,##0.##" },
-      value: "5;7",
       dimension: ""
     },
     
@@ -395,6 +394,8 @@
     // redraw range line
     if( this.o.pointers[0] && this.o.pointers[1] )
       this.o.value.css({ left: this.o.pointers[0].value.prc + "%", width: ( this.o.pointers[1].value.prc - this.o.pointers[0].value.prc ) + "%" });
+    else if( this.o.pointers[0] )
+      this.o.value.css({ left: "1px", width: this.o.pointers[0].value.prc + "%" });
 
     this.o.labels[pointer.uid].value.html(
       this.nice(
