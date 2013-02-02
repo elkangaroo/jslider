@@ -173,18 +173,8 @@
 			this.is.drag = false;
 
 			if( this.outer && this.outer.get(0) ){
-
-				if( $.browser.mozilla ){
-					this.outer.css({ overflow: "hidden" });
-				} else {
-					this.outer.css({ overflow: "visible" });
-				}
-
-        if( $.browser.msie && $.browser.version == '6.0' ){
-         this.outer.css({ height: "100%" });
-        } else {
-         this.outer.css({ height: "auto" });
-        }  
+				this.outer.css({ overflow: "visible" });
+				this.outer.css({ height: "auto" });
 			}
 
 			this.onmouseup( evt );
