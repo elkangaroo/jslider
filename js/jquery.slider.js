@@ -157,7 +157,6 @@
       step: 1,
       smooth: true,
       limits: true,
-      labels: true,
       round: 0,
       format: { format: "#,##0.##" },
       dimension: ""
@@ -281,9 +280,6 @@
     if( !$this.settings.limits )
       this.domNode.addDependClass("limitless");
 
-    if( !$this.settings.labels )
-      this.domNode.addDependClass("labelless");
-
     this.domNode.find(OPTIONS.selector + "pointer").each(function( i ){
       var value = $this.settings.value.split(";")[i];
       if( value ){
@@ -405,7 +401,7 @@
     
     // redraw position of labels
     this.redrawLabels( pointer );
-    this.redrawLimits();
+
   };
   
   jSlider.prototype.redrawLabels = function( pointer ){
@@ -426,79 +422,77 @@
         sizes.right = false;
         
       label.o.css({ left: prc + "%", marginLeft: sizes.margin, right: "auto" });
-      if( sizes.right )
-        label.o.css({ left: "auto", right: 0 });
-
+      if( sizes.right ) label.o.css({ left: "auto", right: 0 });
       return sizes;
     }
 
-    if( this.settings.labels ){
-      var self = this;
-      var label = this.o.labels[pointer.uid];
-      var prc = pointer.value.prc;
+    var self = this;
+	  var label = this.o.labels[pointer.uid];
+	  var prc = pointer.value.prc;
 
-      var sizes = {
-        label: label.o.outerWidth(),
-        right: false,
-        border: ( prc * this.sizes.domWidth ) / 100
-      };
+	  var sizes = {
+	    label: label.o.outerWidth(),
+	    right: false,
+	    border: ( prc * this.sizes.domWidth ) / 100
+	  };
 
-      if( !this.settings.single ){
-        // glue if near;
-        var another = this.o.pointers[1-pointer.uid];
-        var another_label = this.o.labels[another.uid];
+    if( !this.settings.single ){
+      // glue if near;
+      var another = this.o.pointers[1-pointer.uid];
+    	var another_label = this.o.labels[another.uid];
 
-        switch( pointer.uid ){
-          case 0:
-            if( sizes.border+sizes.label / 2 > another_label.o.offset().left-this.sizes.domOffset.left ){
-              another_label.o.css({ visibility: "hidden" });
-              another_label.value.html( this.nice( another.value.origin ) );
+      switch( pointer.uid ){
+        case 0:
+          if( sizes.border+sizes.label / 2 > another_label.o.offset().left-this.sizes.domOffset.left ){
+            another_label.o.css({ visibility: "hidden" });
+        	  another_label.value.html( this.nice( another.value.origin ) );
 
-              label.o.css({ visibility: "visible" });
+          	label.o.css({ visibility: "visible" });
 
-              prc = ( another.value.prc - prc ) / 2 + prc;
-              if( another.value.prc != pointer.value.prc ){
-                label.value.html( this.nice(pointer.value.origin) + "&nbsp;&ndash;&nbsp;" + this.nice(another.value.origin) );
-                sizes.label = label.o.outerWidth();
-                sizes.border = ( prc * this.sizes.domWidth ) / 100;
-              }
-            } else {
-              another_label.o.css({ visibility: "visible" });
+          	prc = ( another.value.prc - prc ) / 2 + prc;
+          	if( another.value.prc != pointer.value.prc ){
+          	  label.value.html( this.nice(pointer.value.origin) + "&nbsp;&ndash;&nbsp;" + this.nice(another.value.origin) );
+            	sizes.label = label.o.outerWidth();
+            	sizes.border = ( prc * this.sizes.domWidth ) / 100;
             }
-            break;
+          } else {
+          	another_label.o.css({ visibility: "visible" });
+          }
+          break;
 
-          case 1:
-            if( sizes.border - sizes.label / 2 < another_label.o.offset().left - this.sizes.domOffset.left + another_label.o.outerWidth() ){
-              another_label.o.css({ visibility: "hidden" });
-              another_label.value.html( this.nice(another.value.origin) );
+        case 1:
+          if( sizes.border - sizes.label / 2 < another_label.o.offset().left - this.sizes.domOffset.left + another_label.o.outerWidth() ){
+            another_label.o.css({ visibility: "hidden" });
+        	  another_label.value.html( this.nice(another.value.origin) );
 
-              label.o.css({ visibility: "visible" });
+          	label.o.css({ visibility: "visible" });
 
-              prc = ( prc - another.value.prc ) / 2 + another.value.prc;
-              if( another.value.prc != pointer.value.prc ){
-                label.value.html( this.nice(another.value.origin) + "&nbsp;&ndash;&nbsp;" + this.nice(pointer.value.origin) );
-                sizes.label = label.o.outerWidth();
-                sizes.border = ( prc * this.sizes.domWidth ) / 100;
-              }
-            } else {
-              another_label.o.css({ visibility: "visible" });
+          	prc = ( prc - another.value.prc ) / 2 + another.value.prc;
+          	if( another.value.prc != pointer.value.prc ){
+          	  label.value.html( this.nice(another.value.origin) + "&nbsp;&ndash;&nbsp;" + this.nice(pointer.value.origin) );
+            	sizes.label = label.o.outerWidth();
+            	sizes.border = ( prc * this.sizes.domWidth ) / 100;
             }
-            break;
-        }
-      }
-
-      sizes = setPosition( label, sizes, prc );
-      
-      /* draw second label */
-      if( another_label ){
-        var sizes = {
-          label: another_label.o.outerWidth(),
-          right: false,
-          border: ( another.value.prc * this.sizes.domWidth ) / 100
-        };
-        sizes = setPosition( another_label, sizes, another.value.prc );
+          } else {
+            another_label.o.css({ visibility: "visible" });
+          }
+          break;
       }
     }
+
+    sizes = setPosition( label, sizes, prc );
+    
+    /* draw second label */
+    if( another_label ){
+      var sizes = {
+  	    label: another_label.o.outerWidth(),
+  	    right: false,
+  	    border: ( another.value.prc * this.sizes.domWidth ) / 100
+  	  };
+      sizes = setPosition( another_label, sizes, another.value.prc );
+    }
+	  
+    this.redrawLimits();
   };
   
   jSlider.prototype.redrawLimits = function(){
